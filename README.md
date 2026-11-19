@@ -468,7 +468,14 @@ O mesmo roteiro roda automaticamente e gera o relatório de evidência:
 
 ## Evidências
 
-Os prints e o relatório gerado pelo script ficam em [`docs/evidencias/`](docs/evidencias/). Veja o [checklist](docs/evidencias/README.md).
+Execução de 19/11/2026: **`mvn test` com 16 testes e 0 falhas**, **migrações V1 a V5 aplicadas** e **70/70 cenários manuais OK**. A página completa, com os 13 prints, está em [`docs/evidencias/`](docs/evidencias/README.md), e o resultado cenário por cenário em [`docs/evidencias/execucao-testes-manuais.md`](docs/evidencias/execucao-testes-manuais.md).
+
+| | |
+|---|---|
+| ![mvn test](docs/evidencias/01-mvn-test-build-success.jpg) | ![Swagger](docs/evidencias/04-swagger-ui.jpg) |
+| `mvn test`: BUILD SUCCESS | Swagger UI |
+| ![Alerta com rota](docs/evidencias/06-alerta-com-rota-segura.jpg) | ![Flyway](docs/evidencias/12-flyway-schema-history.jpg) |
+| Alerta escalado com rota segura | `flyway_schema_history`: V1–V5 |
 
 ## Mapeamento para os critérios de avaliação
 
