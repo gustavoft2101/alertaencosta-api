@@ -1,0 +1,1454 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2026-11-18T21:00:00.000Z",
+  "__export_source": "insomnia.desktop.app:v9.3.3",
+  "resources": [
+    {
+      "_id": "wrk_alertaencosta",
+      "_type": "workspace",
+      "parentId": null,
+      "name": "AlertaEncosta API - Global Solution",
+      "description": "Testes manuais da API AlertaEncosta. Execute as pastas em ordem com o banco recem-criado (apague ./data para resetar).",
+      "scope": "collection"
+    },
+    {
+      "_id": "env_alertaencosta_base",
+      "_type": "environment",
+      "parentId": "wrk_alertaencosta",
+      "name": "Base Environment",
+      "data": {
+        "base_url": "http://localhost:8080/api/v1",
+        "setor_id": "5",
+        "ponto_id": "5",
+        "morador_id": "7",
+        "estacao_id": "4",
+        "alerta_id": "2",
+        "ocorrencia_id": "4",
+        "ponto_temp_id": "6"
+      },
+      "dataPropertyOrder": {
+        "&": [
+          "base_url",
+          "setor_id",
+          "ponto_id",
+          "morador_id",
+          "estacao_id",
+          "alerta_id",
+          "ocorrencia_id",
+          "ponto_temp_id"
+        ]
+      }
+    },
+    {
+      "_id": "fld_1",
+      "_type": "request_group",
+      "parentId": "wrk_alertaencosta",
+      "name": "1. Setores de risco",
+      "metaSortKey": 1
+    },
+    {
+      "_id": "req_01",
+      "_type": "request",
+      "parentId": "fld_1",
+      "name": "01 POST Cadastrar setor -> 201",
+      "description": "Setor nasce com risco BAIXO. id 5 em banco recem-criado.\n\nStatus esperado: **201**",
+      "method": "POST",
+      "url": "{{ _.base_url }}/setores",
+      "metaSortKey": 1,
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"codigo\": \"BR-05\",\n  \"nome\": \"Viela da Paz\",\n  \"bairro\": \"Vila Brasilandia\",\n  \"tipoRisco\": \"DESLIZAMENTO\",\n  \"latitude\": -23.448,\n  \"longitude\": -46.699,\n  \"limiteChuvaMm\": 70,\n  \"limiteUmidadeSoloPct\": 85\n}"
+      },
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_02",
+      "_type": "request",
+      "parentId": "fld_1",
+      "name": "02 POST Cadastrar setor com codigo duplicado -> 409",
+      "description": "Status esperado: **409**",
+      "method": "POST",
+      "url": "{{ _.base_url }}/setores",
+      "metaSortKey": 2,
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"codigo\": \"br-05\",\n  \"nome\": \"Outro\",\n  \"bairro\": \"Vila Brasilandia\",\n  \"tipoRisco\": \"MISTO\",\n  \"latitude\": -23.44,\n  \"longitude\": -46.69,\n  \"limiteChuvaMm\": 70,\n  \"limiteUmidadeSoloPct\": 85\n}"
+      },
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_03",
+      "_type": "request",
+      "parentId": "fld_1",
+      "name": "03 POST Cadastrar setor invalido -> 400",
+      "description": "Enum invalido gera 400 de corpo ilegivel.\n\nStatus esperado: **400**",
+      "method": "POST",
+      "url": "{{ _.base_url }}/setores",
+      "metaSortKey": 3,
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"codigo\": \"SETOR5\",\n  \"nome\": \"\",\n  \"tipoRisco\": \"TERREMOTO\",\n  \"latitude\": -23.44,\n  \"longitude\": -46.69,\n  \"limiteChuvaMm\": 0,\n  \"limiteUmidadeSoloPct\": 120\n}"
+      },
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_04",
+      "_type": "request",
+      "parentId": "fld_1",
+      "name": "04 GET Listar setores em risco ALTO -> 200",
+      "description": "Status esperado: **200**",
+      "method": "GET",
+      "url": "{{ _.base_url }}/setores?nivel=ALTO",
+      "metaSortKey": 4,
+      "headers": [],
+      "body": {},
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_05",
+      "_type": "request",
+      "parentId": "fld_1",
+      "name": "05 GET Buscar setor -> 200",
+      "description": "Status esperado: **200**",
+      "method": "GET",
+      "url": "{{ _.base_url }}/setores/{{ _.setor_id }}",
+      "metaSortKey": 5,
+      "headers": [],
+      "body": {},
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_06",
+      "_type": "request",
+      "parentId": "fld_1",
+      "name": "06 GET Situacao do BR-02 (painel) -> 200",
+      "description": "Nivel ALTO, ultima leitura, alerta ativo e moradores prioritarios.\n\nStatus esperado: **200**",
+      "method": "GET",
+      "url": "{{ _.base_url }}/setores/2/situacao",
+      "metaSortKey": 6,
+      "headers": [],
+      "body": {},
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_07",
+      "_type": "request",
+      "parentId": "fld_1",
+      "name": "07 PUT Atualizar setor (PUT) -> 200",
+      "description": "Status esperado: **200**",
+      "method": "PUT",
+      "url": "{{ _.base_url }}/setores/{{ _.setor_id }}",
+      "metaSortKey": 7,
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"Viela da Paz e Escadaria\",\n  \"bairro\": \"Vila Brasilandia\",\n  \"tipoRisco\": \"DESLIZAMENTO\",\n  \"latitude\": -23.448,\n  \"longitude\": -46.699,\n  \"limiteChuvaMm\": 65,\n  \"limiteUmidadeSoloPct\": 85\n}"
+      },
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_08",
+      "_type": "request",
+      "parentId": "fld_1",
+      "name": "08 DELETE Excluir setor em uso -> 409",
+      "description": "Status esperado: **409**",
+      "method": "DELETE",
+      "url": "{{ _.base_url }}/setores/2",
+      "metaSortKey": 8,
+      "headers": [],
+      "body": {},
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "fld_2",
+      "_type": "request_group",
+      "parentId": "wrk_alertaencosta",
+      "name": "2. Pontos de apoio e rota segura",
+      "metaSortKey": 2
+    },
+    {
+      "_id": "req_09",
+      "_type": "request",
+      "parentId": "fld_2",
+      "name": "09 POST Cadastrar ponto de apoio -> 201",
+      "description": "id 5 em banco recem-criado.\n\nStatus esperado: **201**",
+      "method": "POST",
+      "url": "{{ _.base_url }}/pontos-apoio",
+      "metaSortKey": 9,
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"EE Viela da Paz (simulado)\",\n  \"tipo\": \"ESCOLA\",\n  \"endereco\": \"Rua da Paz, 100 - Vila Brasilandia\",\n  \"latitude\": -23.447,\n  \"longitude\": -46.6975,\n  \"capacidade\": 200\n}"
+      },
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_10",
+      "_type": "request",
+      "parentId": "fld_2",
+      "name": "10 POST Cadastrar ponto invalido -> 400",
+      "description": "Status esperado: **400**",
+      "method": "POST",
+      "url": "{{ _.base_url }}/pontos-apoio",
+      "metaSortKey": 10,
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"X\",\n  \"tipo\": \"ESCOLA\",\n  \"endereco\": \"Rua\",\n  \"latitude\": -95,\n  \"longitude\": -46.69,\n  \"capacidade\": 0\n}"
+      },
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_11",
+      "_type": "request",
+      "parentId": "fld_2",
+      "name": "11 GET Listar pontos ATIVO -> 200",
+      "description": "A UBS (INATIVO) nao aparece.\n\nStatus esperado: **200**",
+      "method": "GET",
+      "url": "{{ _.base_url }}/pontos-apoio?situacao=ATIVO",
+      "metaSortKey": 11,
+      "headers": [],
+      "body": {},
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_12",
+      "_type": "request",
+      "parentId": "fld_2",
+      "name": "12 GET Rota segura a partir do GPS -> 200",
+      "description": "Ponto ATIVO mais proximo, distancia, tempo a pe e link do Google Maps.\n\nStatus esperado: **200**",
+      "method": "GET",
+      "url": "{{ _.base_url }}/pontos-apoio/mais-proximo?latitude=-23.4525&longitude=-46.6950",
+      "metaSortKey": 12,
+      "headers": [],
+      "body": {},
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_13",
+      "_type": "request",
+      "parentId": "fld_2",
+      "name": "13 GET Rota segura sem longitude -> 400",
+      "description": "Status esperado: **400**",
+      "method": "GET",
+      "url": "{{ _.base_url }}/pontos-apoio/mais-proximo?latitude=-23.4525",
+      "metaSortKey": 13,
+      "headers": [],
+      "body": {},
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_14",
+      "_type": "request",
+      "parentId": "fld_2",
+      "name": "14 PUT Atualizar ponto (PUT) -> 200",
+      "description": "Status esperado: **200**",
+      "method": "PUT",
+      "url": "{{ _.base_url }}/pontos-apoio/{{ _.ponto_id }}",
+      "metaSortKey": 14,
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"EE Viela da Paz (simulado)\",\n  \"tipo\": \"ESCOLA\",\n  \"endereco\": \"Rua da Paz, 100 - Vila Brasilandia\",\n  \"latitude\": -23.447,\n  \"longitude\": -46.6975,\n  \"capacidade\": 250,\n  \"situacao\": \"ATIVO\"\n}"
+      },
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_15",
+      "_type": "request",
+      "parentId": "fld_2",
+      "name": "15 DELETE Excluir ponto ja usado em alerta -> 409",
+      "description": "Status esperado: **409**",
+      "method": "DELETE",
+      "url": "{{ _.base_url }}/pontos-apoio/2",
+      "metaSortKey": 15,
+      "headers": [],
+      "body": {},
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "fld_3",
+      "_type": "request_group",
+      "parentId": "wrk_alertaencosta",
+      "name": "3. Moradores",
+      "metaSortKey": 3
+    },
+    {
+      "_id": "req_16",
+      "_type": "request",
+      "parentId": "fld_3",
+      "name": "16 POST Cadastrar moradora idosa -> 201",
+      "description": "id 7 em banco recem-criado.\n\nStatus esperado: **201**",
+      "method": "POST",
+      "url": "{{ _.base_url }}/moradores",
+      "metaSortKey": 16,
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"Benedita Alves\",\n  \"email\": \"benedita.alves@email.com\",\n  \"cpf\": \"746.971.314-01\",\n  \"telefone\": \"(11) 96543-2109\",\n  \"endereco\": \"Viela da Paz, 42 - casa 3\",\n  \"latitude\": -23.4483,\n  \"longitude\": -46.6994,\n  \"setorId\": {{ _.setor_id }},\n  \"necessidadeEspecial\": \"IDOSO\",\n  \"pushToken\": \"ExponentPushToken[simulado-benedita]\"\n}"
+      },
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_17",
+      "_type": "request",
+      "parentId": "fld_3",
+      "name": "17 POST Cadastrar morador com e-mail duplicado -> 409",
+      "description": "Status esperado: **409**",
+      "method": "POST",
+      "url": "{{ _.base_url }}/moradores",
+      "metaSortKey": 17,
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"Outra\",\n  \"email\": \"BENEDITA.ALVES@email.com\",\n  \"cpf\": \"123.456.789-09\",\n  \"telefone\": \"11\",\n  \"endereco\": \"Rua\",\n  \"setorId\": 1\n}"
+      },
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_18",
+      "_type": "request",
+      "parentId": "fld_3",
+      "name": "18 POST Cadastrar morador invalido -> 400",
+      "description": "Status esperado: **400**",
+      "method": "POST",
+      "url": "{{ _.base_url }}/moradores",
+      "metaSortKey": 18,
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"\",\n  \"email\": \"nao-e-email\",\n  \"cpf\": \"123\",\n  \"setorId\": null\n}"
+      },
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_19",
+      "_type": "request",
+      "parentId": "fld_3",
+      "name": "19 POST Cadastrar morador em setor inexistente -> 404",
+      "description": "Status esperado: **404**",
+      "method": "POST",
+      "url": "{{ _.base_url }}/moradores",
+      "metaSortKey": 19,
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"Teste\",\n  \"email\": \"teste.setor@email.com\",\n  \"cpf\": \"123.456.789-09\",\n  \"telefone\": \"11\",\n  \"endereco\": \"Rua\",\n  \"setorId\": 9999\n}"
+      },
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_20",
+      "_type": "request",
+      "parentId": "fld_3",
+      "name": "20 GET Listar moradores do BR-02 -> 200",
+      "description": "CPF mascarado; token push nunca e devolvido.\n\nStatus esperado: **200**",
+      "method": "GET",
+      "url": "{{ _.base_url }}/moradores?setorId=2",
+      "metaSortKey": 20,
+      "headers": [],
+      "body": {},
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_21",
+      "_type": "request",
+      "parentId": "fld_3",
+      "name": "21 GET Buscar morador -> 200",
+      "description": "Status esperado: **200**",
+      "method": "GET",
+      "url": "{{ _.base_url }}/moradores/{{ _.morador_id }}",
+      "metaSortKey": 21,
+      "headers": [],
+      "body": {},
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_22",
+      "_type": "request",
+      "parentId": "fld_3",
+      "name": "22 GET Rota segura do morador -> 200",
+      "description": "Status esperado: **200**",
+      "method": "GET",
+      "url": "{{ _.base_url }}/moradores/{{ _.morador_id }}/rota-segura",
+      "metaSortKey": 22,
+      "headers": [],
+      "body": {},
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_23",
+      "_type": "request",
+      "parentId": "fld_3",
+      "name": "23 PUT Atualizar morador (PUT) -> 200",
+      "description": "Status esperado: **200**",
+      "method": "PUT",
+      "url": "{{ _.base_url }}/moradores/{{ _.morador_id }}",
+      "metaSortKey": 23,
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"Benedita Alves de Souza\",\n  \"email\": \"benedita.souza@email.com\",\n  \"telefone\": \"(11) 96543-0000\",\n  \"endereco\": \"Viela da Paz, 42 - casa 3\",\n  \"latitude\": -23.4483,\n  \"longitude\": -46.6994,\n  \"setorId\": {{ _.setor_id }},\n  \"necessidadeEspecial\": \"MOBILIDADE_REDUZIDA\",\n  \"pushToken\": \"ExponentPushToken[simulado-benedita]\"\n}"
+      },
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_24",
+      "_type": "request",
+      "parentId": "fld_3",
+      "name": "24 GET Buscar morador inexistente -> 404",
+      "description": "Status esperado: **404**",
+      "method": "GET",
+      "url": "{{ _.base_url }}/moradores/9999",
+      "metaSortKey": 24,
+      "headers": [],
+      "body": {},
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_25",
+      "_type": "request",
+      "parentId": "fld_3",
+      "name": "25 DELETE Excluir morador com historico -> 409",
+      "description": "Status esperado: **409**",
+      "method": "DELETE",
+      "url": "{{ _.base_url }}/moradores/1",
+      "metaSortKey": 25,
+      "headers": [],
+      "body": {},
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "fld_4",
+      "_type": "request_group",
+      "parentId": "wrk_alertaencosta",
+      "name": "4. Estacoes ESP32 e leituras",
+      "metaSortKey": 4
+    },
+    {
+      "_id": "req_26",
+      "_type": "request",
+      "parentId": "fld_4",
+      "name": "26 POST Cadastrar estacao -> 201",
+      "description": "id 4 em banco recem-criado.\n\nStatus esperado: **201**",
+      "method": "POST",
+      "url": "{{ _.base_url }}/estacoes",
+      "metaSortKey": 26,
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"codigo\": \"ESP32-BRA-05\",\n  \"setorId\": {{ _.setor_id }},\n  \"latitude\": -23.4481,\n  \"longitude\": -46.6991\n}"
+      },
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_27",
+      "_type": "request",
+      "parentId": "fld_4",
+      "name": "27 POST Cadastrar estacao duplicada -> 409",
+      "description": "Status esperado: **409**",
+      "method": "POST",
+      "url": "{{ _.base_url }}/estacoes",
+      "metaSortKey": 27,
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"codigo\": \"esp32-bra-05\",\n  \"setorId\": 1,\n  \"latitude\": -23.44,\n  \"longitude\": -46.69\n}"
+      },
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_28",
+      "_type": "request",
+      "parentId": "fld_4",
+      "name": "28 GET Listar estacoes do BR-02 -> 200",
+      "description": "Status esperado: **200**",
+      "method": "GET",
+      "url": "{{ _.base_url }}/estacoes?setorId=2",
+      "metaSortKey": 28,
+      "headers": [],
+      "body": {},
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_29",
+      "_type": "request",
+      "parentId": "fld_4",
+      "name": "29 POST Leitura normal (chuva fraca) -> 201",
+      "description": "Classificada BAIXO; acao NENHUMA.\n\nStatus esperado: **201**",
+      "method": "POST",
+      "url": "{{ _.base_url }}/estacoes/{{ _.estacao_id }}/leituras",
+      "metaSortKey": 29,
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"chuvaMm\": 15.0,\n  \"umidadeSoloPct\": 50.0\n}"
+      },
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_30",
+      "_type": "request",
+      "parentId": "fld_4",
+      "name": "30 POST Leitura acima do limite -> alerta automatico -> 201",
+      "description": "Chuva 116% do limite: setor vai a ALTO e a API emite o alerta (id 2) com a rota ate o ponto de apoio mais proximo. acao = ALERTA_EMITIDO.\n\nStatus esperado: **201**",
+      "method": "POST",
+      "url": "{{ _.base_url }}/estacoes/{{ _.estacao_id }}/leituras",
+      "metaSortKey": 30,
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"chuvaMm\": 75.5,\n  \"umidadeSoloPct\": 92.0\n}"
+      },
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_31",
+      "_type": "request",
+      "parentId": "fld_4",
+      "name": "31 POST Nova leitura forte com alerta ja ativo -> 201",
+      "description": "Nao duplica alerta: acao = ALERTA_JA_ATIVO.\n\nStatus esperado: **201**",
+      "method": "POST",
+      "url": "{{ _.base_url }}/estacoes/{{ _.estacao_id }}/leituras",
+      "metaSortKey": 31,
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"chuvaMm\": 80.0,\n  \"umidadeSoloPct\": 94.0\n}"
+      },
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_32",
+      "_type": "request",
+      "parentId": "fld_4",
+      "name": "32 GET Situacao do novo setor -> 200",
+      "description": "Status esperado: **200**",
+      "method": "GET",
+      "url": "{{ _.base_url }}/setores/{{ _.setor_id }}/situacao",
+      "metaSortKey": 32,
+      "headers": [],
+      "body": {},
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_33",
+      "_type": "request",
+      "parentId": "fld_4",
+      "name": "33 GET Historico de leituras da estacao -> 200",
+      "description": "Status esperado: **200**",
+      "method": "GET",
+      "url": "{{ _.base_url }}/estacoes/{{ _.estacao_id }}/leituras",
+      "metaSortKey": 33,
+      "headers": [],
+      "body": {},
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_34",
+      "_type": "request",
+      "parentId": "fld_4",
+      "name": "34 POST Leitura de estacao em MANUTENCAO -> 422",
+      "description": "Status esperado: **422**",
+      "method": "POST",
+      "url": "{{ _.base_url }}/estacoes/3/leituras",
+      "metaSortKey": 34,
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"chuvaMm\": 10.0,\n  \"umidadeSoloPct\": 40.0\n}"
+      },
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_35",
+      "_type": "request",
+      "parentId": "fld_4",
+      "name": "35 POST Leitura fora da faixa do sensor -> 400",
+      "description": "Status esperado: **400**",
+      "method": "POST",
+      "url": "{{ _.base_url }}/estacoes/{{ _.estacao_id }}/leituras",
+      "metaSortKey": 35,
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"chuvaMm\": 10.0,\n  \"umidadeSoloPct\": 150.0\n}"
+      },
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_36",
+      "_type": "request",
+      "parentId": "fld_4",
+      "name": "36 DELETE Excluir estacao com leituras -> 409",
+      "description": "Status esperado: **409**",
+      "method": "DELETE",
+      "url": "{{ _.base_url }}/estacoes/2",
+      "metaSortKey": 36,
+      "headers": [],
+      "body": {},
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "fld_5",
+      "_type": "request_group",
+      "parentId": "wrk_alertaencosta",
+      "name": "5. Previsoes do modelo de ML",
+      "metaSortKey": 5
+    },
+    {
+      "_id": "req_37",
+      "_type": "request",
+      "parentId": "fld_5",
+      "name": "37 POST Modelo preve ALTO para o BR-03 -> 201",
+      "description": "BR-03 sai de MEDIO para ALTO e recebe alerta automatico (id 3).\n\nStatus esperado: **201**",
+      "method": "POST",
+      "url": "{{ _.base_url }}/setores/3/previsoes",
+      "metaSortKey": 37,
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nivel\": \"ALTO\",\n  \"probabilidade\": 0.88,\n  \"versaoModelo\": \"rf-v1.0\"\n}"
+      },
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_38",
+      "_type": "request",
+      "parentId": "fld_5",
+      "name": "38 POST Previsao com probabilidade invalida -> 400",
+      "description": "Status esperado: **400**",
+      "method": "POST",
+      "url": "{{ _.base_url }}/setores/3/previsoes",
+      "metaSortKey": 38,
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nivel\": \"ALTO\",\n  \"probabilidade\": 1.5\n}"
+      },
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_39",
+      "_type": "request",
+      "parentId": "fld_5",
+      "name": "39 GET Historico de previsoes do BR-03 -> 200",
+      "description": "Status esperado: **200**",
+      "method": "GET",
+      "url": "{{ _.base_url }}/setores/3/previsoes",
+      "metaSortKey": 39,
+      "headers": [],
+      "body": {},
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "fld_6",
+      "_type": "request_group",
+      "parentId": "wrk_alertaencosta",
+      "name": "6. Alertas e busca ativa",
+      "metaSortKey": 6
+    },
+    {
+      "_id": "req_40",
+      "_type": "request",
+      "parentId": "fld_6",
+      "name": "40 GET Listar alertas ATIVO -> 200",
+      "description": "Status esperado: **200**",
+      "method": "GET",
+      "url": "{{ _.base_url }}/alertas?status=ATIVO",
+      "metaSortKey": 40,
+      "headers": [],
+      "body": {},
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_41",
+      "_type": "request",
+      "parentId": "fld_6",
+      "name": "41 GET Buscar alerta automatico -> 200",
+      "description": "Status esperado: **200**",
+      "method": "GET",
+      "url": "{{ _.base_url }}/alertas/{{ _.alerta_id }}",
+      "metaSortKey": 41,
+      "headers": [],
+      "body": {},
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_42",
+      "_type": "request",
+      "parentId": "fld_6",
+      "name": "42 POST Emitir alerta manual em setor com alerta ativo -> 409",
+      "description": "Status esperado: **409**",
+      "method": "POST",
+      "url": "{{ _.base_url }}/alertas",
+      "metaSortKey": 42,
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"setorId\": {{ _.setor_id }},\n  \"nivel\": \"ALTO\"\n}"
+      },
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_43",
+      "_type": "request",
+      "parentId": "fld_6",
+      "name": "43 POST Emitir alerta manual MEDIO no BR-01 -> 201",
+      "description": "Mensagem e rota montadas pela API. id 4.\n\nStatus esperado: **201**",
+      "method": "POST",
+      "url": "{{ _.base_url }}/alertas",
+      "metaSortKey": 43,
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"setorId\": 1,\n  \"nivel\": \"MEDIO\"\n}"
+      },
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_44",
+      "_type": "request",
+      "parentId": "fld_6",
+      "name": "44 POST Emitir alerta com nivel BAIXO -> 422",
+      "description": "Status esperado: **422**",
+      "method": "POST",
+      "url": "{{ _.base_url }}/alertas",
+      "metaSortKey": 44,
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"setorId\": 4,\n  \"nivel\": \"BAIXO\"\n}"
+      },
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_45",
+      "_type": "request",
+      "parentId": "fld_6",
+      "name": "45 PUT Moradora confirma que esta segura -> 200",
+      "description": "Status esperado: **200**",
+      "method": "PUT",
+      "url": "{{ _.base_url }}/alertas/{{ _.alerta_id }}/confirmacoes/{{ _.morador_id }}",
+      "metaSortKey": 45,
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"situacao\": \"SEGURO\",\n  \"observacao\": \"Cheguei na escola.\"\n}"
+      },
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_46",
+      "_type": "request",
+      "parentId": "fld_6",
+      "name": "46 PUT Morador de outro setor tenta responder -> 422",
+      "description": "Status esperado: **422**",
+      "method": "PUT",
+      "url": "{{ _.base_url }}/alertas/{{ _.alerta_id }}/confirmacoes/1",
+      "metaSortKey": 46,
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"situacao\": \"SEGURO\"\n}"
+      },
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_47",
+      "_type": "request",
+      "parentId": "fld_6",
+      "name": "47 GET Pendencias do alerta do BR-02 -> 200",
+      "description": "Maria (pediu ajuda) primeiro; Antonia (mobilidade reduzida, sem resposta) em seguida.\n\nStatus esperado: **200**",
+      "method": "GET",
+      "url": "{{ _.base_url }}/alertas/1/pendencias",
+      "metaSortKey": 47,
+      "headers": [],
+      "body": {},
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_48",
+      "_type": "request",
+      "parentId": "fld_6",
+      "name": "48 PUT Maria e resgatada (atualiza a resposta) -> 200",
+      "description": "PUT idempotente: atualiza a mesma confirmacao.\n\nStatus esperado: **200**",
+      "method": "PUT",
+      "url": "{{ _.base_url }}/alertas/1/confirmacoes/1",
+      "metaSortKey": 48,
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"situacao\": \"SEGURO\",\n  \"observacao\": \"Resgatada pela equipe da Defesa Civil.\"\n}"
+      },
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_49",
+      "_type": "request",
+      "parentId": "fld_6",
+      "name": "49 GET Pendencias depois do resgate -> 200",
+      "description": "Resta apenas Antonia.\n\nStatus esperado: **200**",
+      "method": "GET",
+      "url": "{{ _.base_url }}/alertas/1/pendencias",
+      "metaSortKey": 49,
+      "headers": [],
+      "body": {},
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_50",
+      "_type": "request",
+      "parentId": "fld_6",
+      "name": "50 GET Respostas ao alerta do BR-02 -> 200",
+      "description": "Status esperado: **200**",
+      "method": "GET",
+      "url": "{{ _.base_url }}/alertas/1/confirmacoes",
+      "metaSortKey": 50,
+      "headers": [],
+      "body": {},
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_51",
+      "_type": "request",
+      "parentId": "fld_6",
+      "name": "51 PATCH Encerrar alerta -> 200",
+      "description": "Status esperado: **200**",
+      "method": "PATCH",
+      "url": "{{ _.base_url }}/alertas/{{ _.alerta_id }}/encerramento",
+      "metaSortKey": 51,
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"motivo\": \"Chuva cessou e vistoria nao encontrou movimentacao do solo.\"\n}"
+      },
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_52",
+      "_type": "request",
+      "parentId": "fld_6",
+      "name": "52 PATCH Encerrar alerta ja encerrado -> 422",
+      "description": "Status esperado: **422**",
+      "method": "PATCH",
+      "url": "{{ _.base_url }}/alertas/{{ _.alerta_id }}/encerramento",
+      "metaSortKey": 52,
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"motivo\": \"De novo\"\n}"
+      },
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_53",
+      "_type": "request",
+      "parentId": "fld_6",
+      "name": "53 PUT Responder alerta encerrado -> 422",
+      "description": "Status esperado: **422**",
+      "method": "PUT",
+      "url": "{{ _.base_url }}/alertas/{{ _.alerta_id }}/confirmacoes/{{ _.morador_id }}",
+      "metaSortKey": 53,
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"situacao\": \"SEGURO\"\n}"
+      },
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_54",
+      "_type": "request",
+      "parentId": "fld_6",
+      "name": "54 PATCH Encerrar sem motivo -> 400",
+      "description": "Status esperado: **400**",
+      "method": "PATCH",
+      "url": "{{ _.base_url }}/alertas/4/encerramento",
+      "metaSortKey": 54,
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{}"
+      },
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "fld_7",
+      "_type": "request_group",
+      "parentId": "wrk_alertaencosta",
+      "name": "7. Ocorrencias (reportes)",
+      "metaSortKey": 7
+    },
+    {
+      "_id": "req_55",
+      "_type": "request",
+      "parentId": "fld_7",
+      "name": "55 POST Reportar trinca no barranco -> 201",
+      "description": "id 4 em banco recem-criado.\n\nStatus esperado: **201**",
+      "method": "POST",
+      "url": "{{ _.base_url }}/ocorrencias",
+      "metaSortKey": 55,
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"tipo\": \"TRINCA_SOLO\",\n  \"descricao\": \"Rachadura nova no barranco atras da casa, com cerca de 2 metros.\",\n  \"fotoUrl\": \"https://storage.alertaencosta.app/fotos/simulada-001.jpg\",\n  \"latitude\": -23.4484,\n  \"longitude\": -46.6993,\n  \"moradorId\": {{ _.morador_id }}\n}"
+      },
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_56",
+      "_type": "request",
+      "parentId": "fld_7",
+      "name": "56 POST Reportar com tipo invalido -> 400",
+      "description": "Status esperado: **400**",
+      "method": "POST",
+      "url": "{{ _.base_url }}/ocorrencias",
+      "metaSortKey": 56,
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"tipo\": \"TERREMOTO\",\n  \"descricao\": \"Teste de tipo invalido.\",\n  \"latitude\": -23.44,\n  \"longitude\": -46.69,\n  \"moradorId\": 1\n}"
+      },
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_57",
+      "_type": "request",
+      "parentId": "fld_7",
+      "name": "57 GET Listar reportes ABERTA -> 200",
+      "description": "Status esperado: **200**",
+      "method": "GET",
+      "url": "{{ _.base_url }}/ocorrencias?status=ABERTA",
+      "metaSortKey": 57,
+      "headers": [],
+      "body": {},
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_58",
+      "_type": "request",
+      "parentId": "fld_7",
+      "name": "58 GET Consultar por protocolo -> 200",
+      "description": "Status esperado: **200**",
+      "method": "GET",
+      "url": "{{ _.base_url }}/ocorrencias/protocolo/AE-2026-DEMO02",
+      "metaSortKey": 58,
+      "headers": [],
+      "body": {},
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_59",
+      "_type": "request",
+      "parentId": "fld_7",
+      "name": "59 PATCH Pular etapa: ABERTA -> RESOLVIDA -> 422",
+      "description": "Status esperado: **422**",
+      "method": "PATCH",
+      "url": "{{ _.base_url }}/ocorrencias/{{ _.ocorrencia_id }}/status",
+      "metaSortKey": 59,
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"status\": \"RESOLVIDA\"\n}"
+      },
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_60",
+      "_type": "request",
+      "parentId": "fld_7",
+      "name": "60 PATCH Status -> EM_VISTORIA -> 200",
+      "description": "Status esperado: **200**",
+      "method": "PATCH",
+      "url": "{{ _.base_url }}/ocorrencias/{{ _.ocorrencia_id }}/status",
+      "metaSortKey": 60,
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"status\": \"EM_VISTORIA\",\n  \"observacao\": \"Vistoria agendada para hoje.\"\n}"
+      },
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_61",
+      "_type": "request",
+      "parentId": "fld_7",
+      "name": "61 PATCH Status -> RESOLVIDA -> 200",
+      "description": "Status esperado: **200**",
+      "method": "PATCH",
+      "url": "{{ _.base_url }}/ocorrencias/{{ _.ocorrencia_id }}/status",
+      "metaSortKey": 61,
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"status\": \"RESOLVIDA\",\n  \"observacao\": \"Barranco contido com lona e sacos de areia.\"\n}"
+      },
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_62",
+      "_type": "request",
+      "parentId": "fld_7",
+      "name": "62 GET Historico do reporte -> 200",
+      "description": "Status esperado: **200**",
+      "method": "GET",
+      "url": "{{ _.base_url }}/ocorrencias/{{ _.ocorrencia_id }}/historico",
+      "metaSortKey": 62,
+      "headers": [],
+      "body": {},
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_63",
+      "_type": "request",
+      "parentId": "fld_7",
+      "name": "63 DELETE Excluir reporte ja resolvido -> 422",
+      "description": "Status esperado: **422**",
+      "method": "DELETE",
+      "url": "{{ _.base_url }}/ocorrencias/{{ _.ocorrencia_id }}",
+      "metaSortKey": 63,
+      "headers": [],
+      "body": {},
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_64",
+      "_type": "request",
+      "parentId": "fld_7",
+      "name": "64 PATCH Descartar sem justificativa -> 422",
+      "description": "Status esperado: **422**",
+      "method": "PATCH",
+      "url": "{{ _.base_url }}/ocorrencias/2/status",
+      "metaSortKey": 64,
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"status\": \"DESCARTADA\"\n}"
+      },
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_65",
+      "_type": "request",
+      "parentId": "fld_7",
+      "name": "65 DELETE Excluir reporte ABERTA (enviado por engano) -> 204",
+      "description": "Status esperado: **204**",
+      "method": "DELETE",
+      "url": "{{ _.base_url }}/ocorrencias/1",
+      "metaSortKey": 65,
+      "headers": [],
+      "body": {},
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "fld_8",
+      "_type": "request_group",
+      "parentId": "wrk_alertaencosta",
+      "name": "8. Indicadores e limpeza",
+      "metaSortKey": 8
+    },
+    {
+      "_id": "req_66",
+      "_type": "request",
+      "parentId": "fld_8",
+      "name": "66 GET Painel de indicadores -> 200",
+      "description": "Setores por nivel, alertas ativos, % de alertados seguros, pedidos de ajuda, reportes e leituras.\n\nStatus esperado: **200**",
+      "method": "GET",
+      "url": "{{ _.base_url }}/indicadores",
+      "metaSortKey": 66,
+      "headers": [],
+      "body": {},
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_67",
+      "_type": "request",
+      "parentId": "fld_8",
+      "name": "67 GET Endpoint inexistente -> 404",
+      "description": "Status esperado: **404**",
+      "method": "GET",
+      "url": "{{ _.base_url }}/alertas/1/comentarios",
+      "metaSortKey": 67,
+      "headers": [],
+      "body": {},
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_68",
+      "_type": "request",
+      "parentId": "fld_8",
+      "name": "68 POST Cadastrar ponto temporario -> 201",
+      "description": "id 6.\n\nStatus esperado: **201**",
+      "method": "POST",
+      "url": "{{ _.base_url }}/pontos-apoio",
+      "metaSortKey": 68,
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"Ponto temporario (simulado)\",\n  \"tipo\": \"OUTRO\",\n  \"endereco\": \"Rua Teste, 1\",\n  \"latitude\": -23.4,\n  \"longitude\": -46.6,\n  \"capacidade\": 10\n}"
+      },
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_69",
+      "_type": "request",
+      "parentId": "fld_8",
+      "name": "69 DELETE Excluir ponto sem uso -> 204",
+      "description": "Status esperado: **204**",
+      "method": "DELETE",
+      "url": "{{ _.base_url }}/pontos-apoio/{{ _.ponto_temp_id }}",
+      "metaSortKey": 69,
+      "headers": [],
+      "body": {},
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_70",
+      "_type": "request",
+      "parentId": "fld_8",
+      "name": "70 GET Confirmar exclusao -> 404",
+      "description": "Status esperado: **404**",
+      "method": "GET",
+      "url": "{{ _.base_url }}/pontos-apoio/{{ _.ponto_temp_id }}",
+      "metaSortKey": 70,
+      "headers": [],
+      "body": {},
+      "parameters": [],
+      "authentication": {},
+      "settingFollowRedirects": "global"
+    }
+  ]
+}
