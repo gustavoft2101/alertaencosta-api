@@ -1,0 +1,47 @@
+spring:
+  application:
+    name: alertaencosta-api
+  profiles:
+    # dev = H2 (roda sem instalar nada) | oracle = Oracle FIAP / Docker
+    default: dev
+  jpa:
+    open-in-view: false
+    hibernate:
+      # O schema e de responsabilidade EXCLUSIVA do Flyway. O Hibernate apenas valida
+      # que as entidades batem com as tabelas criadas pelas migracoes.
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+  flyway:
+    enabled: true
+    # {vendor} e resolvido pelo Spring Boot: db/migration/h2 ou db/migration/oracle
+    locations: classpath:db/migration/{vendor}
+    # Schema da FIAP pode ja ter tabelas de outras disciplinas: cria o baseline na
+    # versao 0 para que a V1 (e todas as seguintes) ainda sejam aplicadas.
+    baseline-on-migrate: true
+    baseline-version: 0
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+  data:
+    web:
+      pageable:
+        max-page-size: 100
+
+server:
+  port: ${PORT:8080}
+  error:
+    include-stacktrace: never
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
+
+logging:
+  level:
+    org.flywaydb: INFO
